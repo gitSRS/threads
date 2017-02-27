@@ -1,10 +1,7 @@
 package com.thread.test;
 
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created by RStreltsov on 27.02.2017.
@@ -30,7 +27,17 @@ public class OperationsPool {
 
         for(int i =0; i < 10; i++) {
             Thransfer tr = new Thransfer(a, b, rnd.nextInt(500));
-            service.submit(tr);
+            Future f = service.submit(tr);
+            try {
+                System.out.println("Operation result = "+f.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                //System.out.println("111 = "+e.getLocalizedMessage());
+                if(e.getCause().toString().equals("com.thread.test.InsufficientFoundsException")){
+                    System.out.println("Operation result = InsufficientFoundsException");
+                }
+            }
             System.out.println("thread = "+tr.getId());
             System.out.println("a= "+a.getBalance());
             System.out.println("b= "+b.getBalance());

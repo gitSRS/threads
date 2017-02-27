@@ -41,12 +41,12 @@ public class Operations {
 
     static void transfer(Account acc1, Account acc2, int amount) throws InsufficientFoundsException, InterruptedException {
 
-        if(acc1.getBalance() < amount) {
-            throw new InsufficientFoundsException();
-        }
 
         if(acc1.getLock().tryLock(10, TimeUnit.SECONDS)) {
             try {
+                if(acc1.getBalance() < amount) {
+                    throw new InsufficientFoundsException();
+                }
                 if(acc2.getLock().tryLock(10, TimeUnit.SECONDS)) {
                     try{
                         acc1.withdraw(amount);

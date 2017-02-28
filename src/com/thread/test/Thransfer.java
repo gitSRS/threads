@@ -3,6 +3,7 @@ package com.thread.test;
 import java.time.LocalTime;
 import java.util.Random;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,10 +15,15 @@ public class Thransfer implements Callable<Boolean> {
     private Account acc2;
     private int amount;
     private static AtomicInteger id = new AtomicInteger(0);
+    private CountDownLatch latch;
 
     @Override
     public Boolean call() throws Exception {
+
+        System.out.println("waiting for start");
+        latch.await();// await for current thread
         Random rd = new Random();
+
         /*
         try {
             Operations.transfer(this.acc1, this.acc2, this.amount);
@@ -64,11 +70,12 @@ public class Thransfer implements Callable<Boolean> {
 
     }
 
-    public Thransfer(Account acc1, Account acc2, int amount) {
+    public Thransfer(Account acc1, Account acc2, int amount, CountDownLatch latch) {
         this.acc1 = acc1;
         this.acc2 = acc2;
         this.amount = amount;
         this.id.incrementAndGet();
+        this.latch = latch;
     }
 
     public int getId() {
